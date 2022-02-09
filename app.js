@@ -92,7 +92,7 @@ app.post('', (req, res) => {
             connection.release() // return the connection to pool
 
             if(!err) {
-                res.send(`Employee with the name: ${params.name} has been added.`)
+                res.send(`Employee: ${params.FirstName} has been added.`)
             } else {
                 console.log(err)
             }
@@ -111,13 +111,13 @@ app.put('', (req, res) => {
         if(err) throw err
         console.log(`connected as id ${connection.threadId}`)
 
-        const { id, name, salary } = req.body
+        const { id, FirstName, age, LastName } = req.body
 
-        connection.query('UPDATE `employee-task` SET name = ?, salary = ? WHERE id = ?', [name, salary, id] , (err, rows) => {
+        connection.query('UPDATE `employee-task` SET FirstName = ?, LastName=?, age = ? WHERE id = ?', [FirstName, LastName, age, id] , (err, rows) => {
             connection.release() // return the connection to pool
 
             if(!err) {
-                res.send(`Employee with the name: ${name} has been updated.`)
+                res.send(`Employee: ${FirstName} has been updated.`)
             } else {
                 console.log(err)
             }

@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // MySQL
-const pool = mysql.createPool({
+const data = mysql.createData({
   connectionLimit: 10,
   host: "localhost",
   user: "sharifa",
@@ -21,12 +21,12 @@ const pool = mysql.createPool({
 // get list
 
 app.get("", (req, res) => {
-  pool.getConnection((err, connection) => {
+  data.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
 
     connection.query("SELECT * from `employee-task`", (err, rows) => {
-      connection.release(); // return the connection to pool
+      connection.release(); // return the connection to data
 
       if (!err) {
         res.send(rows);
@@ -40,12 +40,12 @@ app.get("", (req, res) => {
 // Get an employee by ID
 app.get('/:id', (req, res) => {
 
-    pool.getConnection((err, connection) => {
+    data.getConnection((err, connection) => {
         if(err) throw err
         console.log(`connected as id ${connection.threadId}`)
 
         connection.query('SELECT * from `employee-task` WHERE id = ?', [req.params.id], (err, rows) => {
-            connection.release() // return the connection to pool
+            connection.release() // return the connection to data
 
             if(!err) {
                 res.send(rows)
@@ -60,12 +60,12 @@ app.get('/:id', (req, res) => {
 // remove an employee
 app.delete('/:id', (req, res) => {
 
-    pool.getConnection((err, connection) => {
+    data.getConnection((err, connection) => {
         if(err) throw err
         console.log(`connected as id ${connection.threadId}`)
 
         connection.query('DELETE from `employee-task` WHERE id = ?', [req.params.id], (err, rows) => {
-            connection.release() // return the connection to pool
+            connection.release() // return the connection to data
 
             if(!err) {
                 res.send(`Employee with the Record ID: ${[req.params.id]} has been removed.`)
@@ -82,14 +82,14 @@ app.delete('/:id', (req, res) => {
 // Add an employee
 app.post('', (req, res) => {
 
-    pool.getConnection((err, connection) => {
+    data.getConnection((err, connection) => {
         if(err) throw err
         console.log(`connected as id ${connection.threadId}`)
 
         const params = req.body
 
         connection.query('INSERT INTO `employee-task` SET ?', params , (err, rows) => {
-            connection.release() // return the connection to pool
+            connection.release() // return the connection to data
 
             if(!err) {
                 res.send(`Employee: ${params.FirstName} has been added.`)
@@ -107,14 +107,14 @@ app.post('', (req, res) => {
 // Edit an employee
 app.put('', (req, res) => {
 
-    pool.getConnection((err, connection) => {
+    data.getConnection((err, connection) => {
         if(err) throw err
         console.log(`connected as id ${connection.threadId}`)
 
         const { id, FirstName, age, LastName } = req.body
 
         connection.query('UPDATE `employee-task` SET FirstName = ?, LastName=?, age = ? WHERE id = ?', [FirstName, LastName, age, id] , (err, rows) => {
-            connection.release() // return the connection to pool
+            connection.release() // return the connection to data
 
             if(!err) {
                 res.send(`Employee: ${FirstName} has been updated.`)
